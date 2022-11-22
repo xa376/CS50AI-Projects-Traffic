@@ -1,0 +1,28 @@
+Too small of pooling sizes reduces speed and can have
+worse accuracy (presumably due to overfitting)
+
+doubling filter number reduced accuracy a good amount
+halfing filter number reduced accuracy a slightly lower amount than the above
+
+Adding 1 hidden layer did little
+
+Adding dropout at .5 makes ai unable to learn
+.1 has less accuracy
+
+Changing convol layer size from 3, 3 to 6, 6 made slightly less accuracy
+Changing to 2, 2 did similar
+
+changing activations from relu to selu increased accuracy about .01
+changin to sigmoid increased accuracy to .983, up about .7
+INTERNET RECOMMENDS NOT TO USE SIGMOID?
+strong support for relu
+
+adding double units to the hidden layer lowered accuracy on original data set
+but actually had a slight increase to accuracy on test data
+
+16 filters .925
+
+best with relu on test data .9507
+3 hidden layers 128 neurons each
+48 input
+.2 dropout

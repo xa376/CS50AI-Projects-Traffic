@@ -58,31 +58,34 @@ def load_data(data_dir):
     be a list of integer labels, representing the categories for each of the
     corresponding `images`.
     """
+    # Arrays that will hold the return (images, labels)
     images = []
     labels = []
 
-    # For every category folder in the passed directory
+    # For every category folder in the passed directory, fills the arrays
     for label in range(NUM_CATEGORIES):
-        # Category folder
-        currentFolder = data_dir + os.sep + str(label)
-        #print(currentFolder)
+        # Category folder, named after the current index
+        categoryFolder = data_dir + os.sep + str(label)
+
         # For file in category folder, read and resize image, append to arrays
-        for filename in os.listdir(currentFolder):
-            #print(os.path.exists(os.getcwd() + os.sep + currentFolder + os.sep + filename))
-            image = cv2.imread(os.getcwd() + os.sep + currentFolder + os.sep + filename)
-            #print(image.shape)
+        for file in os.listdir(categoryFolder):
+
+            # Reads image into numpy array
+            image = cv2.imread(os.getcwd() + os.sep + categoryFolder + os.sep + file)
+
+            # Resizes image
             image = cv2.resize(image, (30, 30))
-            #print(image.shape)
-            #cv2.imshow("image", image)
-            #cv2.waitKey(0)
+
+            # Appends the image and the index which is the label to the arrays
             images.append(image)
             labels.append(label)
+        
+        # Progress tracker
         print(f"Categories read: {label} / {NUM_CATEGORIES - 1}")            
 
     print("Image read complete.")
 
     return (images, labels)
-
 
 def get_model():
     """
@@ -90,8 +93,36 @@ def get_model():
     `input_shape` of the first layer is `(IMG_WIDTH, IMG_HEIGHT, 3)`.
     The output layer should have `NUM_CATEGORIES` units, one for each category.
     """
-    raise NotImplementedError
+    # Builds the model
+    model = tf.keras.Sequential([
+            # Input layer
+            tf.keras.layers.Conv2D(48, (3, 3), activation = "relu", input_shape=(IMG_WIDTH, IMG_HEIGHT, 3)),
 
+            # Pooling
+            tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+
+            # Flattens units
+            tf.keras.layers.Flatten(),
+
+            # Adds hidden layers an dropouts
+            tf.keras.layers.Dense(128, activation="relu"),
+            tf.keras.layers.Dense(128, activation="relu"),
+            tf.keras.layers.Dense(128, activation="relu"),
+            tf.keras.layers.Dropout(0.2),
+
+            # Output layer with categories size units
+            tf.keras.layers.Dense(NUM_CATEGORIES, activation="softmax")
+        ])
+    #input_shape=(IMG_WIDTH, IMG_HEIGHT, 3)
+
+    # Compiles the model
+    model.compile(
+        optimizer="adam",
+        loss="categorical_crossentropy",
+        metrics=["accuracy"]
+        )
+
+    return model
 
 if __name__ == "__main__":
     main()
